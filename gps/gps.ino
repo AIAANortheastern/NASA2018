@@ -3,6 +3,8 @@
 
 // Connect the GPS Power pin to 5V
 // Connect the GPS Ground pin to ground
+// Connect the GPS TX pin to D3
+// Connect the GPS RX pin to D2
 
 SoftwareSerial mySerial(3, 2);
 
@@ -20,27 +22,20 @@ void setup()
 {
     
   // connect at 115200 so we can read the GPS fast enough and echo without dropping chars
-  Serial.begin(115200);
+  Serial.begin(19200);
   Serial.println("Adafruit GPS library basic test!");
 
   // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
   GPS.begin(9600);
   
-  // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-  
   // Set the update rate
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
-  
-  // Request updates on antenna status, comment out to keep quiet
-  GPS.sendCommand(PGCMD_ANTENNA);
 
-  // the nice thing about this code is you can have a timer0 interrupt go off
-  // every 1 millisecond, and read data from the GPS for you. that makes the
-  // loop code a heck of a lot easier!
+  // Interrupt goes off every 1 millisecond
   useInterrupt(true);
 
   delay(1000);
+  
   // Ask for firmware version
   mySerial.println(PMTK_Q_RELEASE);
 }
@@ -73,6 +68,7 @@ void useInterrupt(boolean v) {
 }
 
 uint32_t timer = millis();
+
 void loop()                     // run over and over again
 {
   // in case you are not using the interrupt above, you'll
@@ -99,22 +95,18 @@ void loop()                     // run over and over again
   // if millis() or timer wraps around, we'll just reset it
   if (timer > millis())  timer = millis();
 
-  // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 2000) { 
+  // approximately every .5 seconds or so, print out the current stats
+  if (millis() - timer > 500) { 
     timer = millis(); // reset the timer
     
     //Serial.print("Fix: "); Serial.print((int)GPS.fix);
     //Serial.print(" quality: "); Serial.println((int)GPS.fixquality); 
     
     if (GPS.fix) {
-      
       Serial.print(GPS.latitudeDegrees, 4);
       Serial.print(", "); 
       Serial.println(GPS.longitudeDegrees, 4);
-      
-      //Serial.print("Speed (knots): "); Serial.println(GPS.speed);
-      //Serial.print("Angle: "); Serial.println(GPS.angle);
-      //Serial.print("Altitude: "); Serial.println(GPS.altitude);
+      // Uncomment to read fixed sattelites
       //Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
     }
   }
