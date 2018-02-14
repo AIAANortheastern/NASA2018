@@ -71,7 +71,12 @@ uint32_t timer = millis();
 
 void loop()                     // run over and over again
 {
-  // in case you are not using the interrupt above, you'll
+  get_gps_values();
+}
+
+void get_gps_values()
+{
+    // in case you are not using the interrupt above, you'll
   // need to 'hand query' the GPS, not suggested :(
   if (! usingInterrupt) {
     // read data from the GPS in the 'main loop'
@@ -111,3 +116,4 @@ void loop()                     // run over and over again
     }
   }
 }
+
