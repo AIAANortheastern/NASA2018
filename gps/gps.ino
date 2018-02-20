@@ -22,9 +22,7 @@ void setup()
 {
     
   // connect at 115200 so we can read the GPS fast enough and echo without dropping chars
-  Serial.begin(19200);
-  Serial.println("Adafruit GPS library basic test!");
-
+  Serial.begin(9600);
   // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
   GPS.begin(9600);
   
@@ -35,9 +33,6 @@ void setup()
   useInterrupt(true);
 
   delay(1000);
-  
-  // Ask for firmware version
-  mySerial.println(PMTK_Q_RELEASE);
 }
 
 
@@ -111,8 +106,8 @@ void get_gps_values()
       Serial.print(GPS.latitudeDegrees, 4);
       Serial.print(", "); 
       Serial.println(GPS.longitudeDegrees, 4);
-      // Uncomment to read fixed sattelites
-      //Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+    }else{
+      Serial.print("No Fix");
     }
   }
 }
