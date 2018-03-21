@@ -78,11 +78,34 @@ void setup() {
     // Interrupt goes off every 1 millisecond
     useInterrupt(true);
 
+    // waits after initilization to start running the program
     delay(1000);
 
 }
 
+void get_sensor_data() {
+    
+
+}
+
+void drive_rover() {
+
+  
+}
+
+void deploy_rover() {
+
+  
+} 
+
+void deploy_power_flower() {
+
+  
+}
+
+void 
+
 void loop() {
-  // put your main code here, to run repeatedly:
+
 
 }
