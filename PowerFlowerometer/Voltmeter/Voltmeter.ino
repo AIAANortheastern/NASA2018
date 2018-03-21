@@ -12,6 +12,12 @@ void setup()
 
 void loop()
 {
+  // Voltage, samples, amd sumation variables
+int sum_voltage = 0;
+unsigned char sample_count = 0;
+float voltage = 0.0;
+
+
     // take a number of analog samples and add them up
     while (sample_count < NUM_SAMPLES) {
         sum += analogRead(A2);
