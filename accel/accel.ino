@@ -6,8 +6,8 @@ MPU6050 accelgyro;
 int16_t ax, ay, az;
 #define OUTPUT_READABLE_ACCELGYRO
 
-const int RXPin = A2;
-const int TXPin = A3;
+const int RXPin = A0;
+const int TXPin = A1;
 
 SoftwareSerial Xbee(RXPin, TXPin);
 
@@ -31,5 +31,6 @@ void accel_X_Y_Z(){
         Serial.print(ax); Serial.print("\t");
         Serial.print(ay); Serial.print("\t");
         Serial.print(az); Serial.println("\t");
+        Xbee.write(ax);
 }
 

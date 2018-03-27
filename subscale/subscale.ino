@@ -4,13 +4,11 @@
 #include <Wire.h>
 #endif
 
-//These are the 3 Libraries that are used to communicate with the accelerometer, barometer, and xbee radio
-#include <MMA_7455.h>
 #include <Adafruit_BMP085.h>
 #include <SoftwareSerial.h>
 
 // Starting the accelerometer protocol
-MMA_7455 accel = MMA_7455(i2c_protocol);
+//MMA_7455 accel = MMA_7455(i2c_protocol);
 
 // Defining the pins for the xbee radio
 const int RXPin = A2;
@@ -47,7 +45,7 @@ void setup() {
   //Start xbee serial connection
   Xbee.begin(9600);
   // Accelerometer initilization  
-  accel.begin();
+  //accel.begin();
 
   // Barometer initilization
   if (!bmp.begin()) {
@@ -57,29 +55,29 @@ void setup() {
 
   pinMode(LED_BUILTIN, OUTPUT);
   
-  accel.setSensitivity(2);
+  //accel.setSensitivity(2);
   /* Verify sensibility - optional */
-  if(accel.getSensitivity() != 2)   Serial.println("Sensitivity failure");
+  //if(accel.getSensitivity() != 2)   Serial.println("Sensitivity failure");
   /* Set accelerometer mode */
-  accel.setMode(measure);
+  //accel.setMode(measure);
   /* Verify accelerometer mode - optional */
-  if(accel.getMode() != measure)    Serial.println("Set mode failure");
+  //if(accel.getMode() != measure)    Serial.println("Set mode failure");
   /* Set axis offsets */
   /* Note: the offset is hardware specific
    * and defined thanks to the auto-calibration example. */
-  accel.setAxisOffset(0, 0, 0);
+  //accel.setAxisOffset(0, 0, 0);
 
 }
 
 void loop() {
     /* Get 10-bit axis raw values */
-  x10 = accel.readAxis10('x');
+  /*x10 = accel.readAxis10('x');
   y10 = accel.readAxis10('y');
   z10 = accel.readAxis10('z');
   /* Get 10-bit axis values in g */
-  xg  = accel.readAxis10g('x');
+  /*xg  = accel.readAxis10g('x');
   yg  = accel.readAxis10g('y');
-  zg  = accel.readAxis10g('z');
+  zg  = accel.readAxis10g('z');*/
 
   // Read the data from the barometer
   Pressure = bmp.readPressure();
@@ -91,7 +89,7 @@ void loop() {
   Xbee.println();
   // Send acceleration values to the xbee to send out
   // X acceleration in decimal form
-  Xbee.print("x:");
+  /*Xbee.print("x:");
   Xbee.print(x10, DEC);
   Xbee.println();
   // Y acceleration in decimal form
@@ -101,7 +99,7 @@ void loop() {
   // Z acceleration in decimal form
   Xbee.print("z:");
   Xbee.print(z10, DEC);
-  Xbee.println();
+  Xbee.println();*/ 
 
   // Barometer Data
   Xbee.print("P:");
