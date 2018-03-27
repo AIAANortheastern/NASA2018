@@ -1,5 +1,5 @@
 // Code complied by Tyler Kosakowski
-// Contributers Karl Swanson, Gavin Chardler, Blake ?
+// Contributers Karl Swanson, Gavin Chardler
 // NASA Student Launch 2018 Northeastern University
 
 // Libraries
@@ -38,6 +38,9 @@ const int power_deploy_pin = 2;
 const int motor_pin_one = 10;
 // If needed a second motor control pin
 //const int motor_pin_two = 11;
+
+// PES Deploy Pin
+const int pes_pin = 4;
 
 // Create the servo objects
 Servo third_wheel;
@@ -151,12 +154,13 @@ void transmit_packet() {
 // Operates the driving of the rover
 void drive_rover() {
 
+    deploy_rover();
+
     // turns on the motors by activating the relay
     digitalWrite(motor_pin_one, HIGH);
 
     delay(30000);
 
-    get_sensor_data();
 
     
     
@@ -167,6 +171,7 @@ void drive_rover() {
 // Deploys the rover from the rocket
 void deploy_rover() {
 
+    digitalWrite(pes_pin, HIGH);
 
     // After the deployment has finished deploy the thrid wheel
     deploy_third_wheel();
