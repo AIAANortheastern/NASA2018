@@ -82,6 +82,10 @@ void setup() {
     delay(1000);
 
 }
+void loop() {
+
+
+}
 
 // Retrieves the sensor data when called
 void get_sensor_data() {
@@ -114,7 +118,7 @@ void deploy_power_flower() {
   
 }
 
-void deploy_thrid_wheel {
+void deploy_third_wheel() {
     
     third_wheel.attach(third_wheel_pin);
 
@@ -192,8 +196,3 @@ void get_gps_values()
   }
 }
 
-
-void loop() {
-
-
-}
