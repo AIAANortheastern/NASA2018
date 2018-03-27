@@ -154,7 +154,7 @@ void drive_rover() {
     // turns on the motors by activating the relay
     digitalWrite(motor_pin_one, HIGH);
 
-    delay(1000);
+    delay(30000);
 
     get_sensor_data();
 
@@ -187,12 +187,19 @@ void deploy_power_flower() {
 
 // This needs to be figurd out, The servo Has not been working with the same or similar code to the power flower
 void deploy_third_wheel() {
+
+    int pos_third = 0;
     
-    third_wheel.attach(third_wheel_pin);
+    third_wheel.attach(9);
 
-    delay(15);
+    third_wheel.write(90);
+  
+    for (pos_third = 0; pos_third <= 30; pos_third += 1) { // goes from 0 degrees to 180 degrees
+      // in steps of 1 degree
+      third_wheel.write(pos_third);              // tell servo to go to position in variable 'pos'
+      delay(15);                       // waits 15ms for the servo to reach the position
+    }
 
-    third_wheel.write(179);
   
 }
 
