@@ -10,6 +10,9 @@
 #include <SoftwareSerial.h>
 #include <Adafruit_GPS.h>
 
+// STR for testing XBEE
+char str;
+
 //Starts the acceleratomoter and gyro device
 MPU6050 accelgyro;
 int16_t ax, ay, az;
@@ -24,10 +27,10 @@ unsigned char sample_count = 0; // current sample number
 float voltage = 0.0;            // calculated voltage
 
 // Gps and Xbee serial pin definitions
-const int gps_rx = A1;
-const int gps_tx = A2;
-const int xbee_rx = A3;
-const int xbee_tx = A4;
+const int gps_rx = 2;
+const int gps_tx = 3;
+const int xbee_rx = A0;
+const int xbee_tx = A1;
 
 // Pin assignments for the two servos
 // Make sure these are PWM capable pins when updated
@@ -65,9 +68,10 @@ boolean launch_mode = true;
 boolean rover_mode = false;
 boolean standby_mode = false;
 
-
-
 void setup() {
+
+    // start Serial Connection
+    Serial.begin(19200);
 
     // starts the wire object
     Wire.begin();
@@ -88,7 +92,7 @@ void setup() {
     power_deploy.attach(power_deploy_pin);
 
     // starts the GPS serial object at the 9600 baud rate
-    GPS.begin(9600);
+    //GPS.begin(4800);
   
     // Set the update rate of the GPS
     GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
@@ -96,13 +100,34 @@ void setup() {
     // Interrupt goes off every 1 millisecond
     useInterrupt(true);
 
+    // Set Relay pin
+    pinMode(10, OUTPUT);
+
     // waits after initilization to start running the program
     delay(1000);
 
 }
+
 void loop() {
 
+transmit_packet();
 
+//if (xbee_serial.available())
+  //{ // If data comes in from XBee, send it out to serial monitor
+    // Serial.write(Xbee.read());
+    str = xbee_serial.read();
+    Serial.println(str);
+    if (str == 'r'){
+      digitalWrite(10, HIGH);
+      Serial.println("Relay Activated");
+    }
+    if (str == 'd'){
+      digitalWrite(10, LOW);
+      Serial.println("Relay Deactivated");
+    }
+  //} else {
+  delay(300);
+  //}
 }
 
 // Retrieves the sensor data when called
@@ -137,17 +162,19 @@ void get_sensor_data() {
 
 //Transmitts a packet when called
 void transmit_packet() {
+  accelgyro.getAcceleration(&ax, &ay, &az);
+  if (xbee_serial.available()){
     // Acceleration data
-    xbee_serial.print("X: ");
-    xbee_serial.println(ax);
-    xbee_serial.print("Y: ");
-    xbee_serial.println(ay);
-    xbee_serial.print("Z: ");
+    xbee_serial.print("|X: ");
+    xbee_serial.print(ax);
+    xbee_serial.print("|Y: ");
+    xbee_serial.print(ay);
+    xbee_serial.print("|Z: ");
     xbee_serial.println(az);
 
     // Transmits the current gps values
     get_gps_values();
-
+  }
     
 }
 
@@ -270,8 +297,13 @@ void get_gps_values()
       Serial.print(GPS.latitudeDegrees, 4);
       Serial.print(", "); 
       Serial.println(GPS.longitudeDegrees, 4);
+      xbee_serial.print("GPS: ");
+      xbee_serial.print(GPS.latitudeDegrees, 4);
+      xbee_serial.print(", ");
+      xbee_serial.print(GPS.latitudeDegrees, 4);
     }else{
       Serial.print("No Fix");
+      xbee_serial.print("GPS: NO FIX");
     }
   }
 }
