@@ -85,6 +85,9 @@ void setup() {
     // sets the motor control pin to output mode
     pinMode(motor_pin_one, OUTPUT);
 
+    // sets the ejection system pin to output mode
+    pinMode(pes_pin, OUTPUT);
+
     // attaches the third wheel servo to the correct pin
     third_wheel.attach(third_wheel_pin);
 
@@ -92,20 +95,13 @@ void setup() {
     power_deploy.attach(power_deploy_pin);
 
     // starts the GPS serial object at the 9600 baud rate
-    //GPS.begin(4800);
+    GPS.begin(4800);
   
     // Set the update rate of the GPS
     GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
 
     // Interrupt goes off every 1 millisecond
     useInterrupt(true);
-
-<<<<<<< HEAD
-    // Set Relay pin
-    pinMode(10, OUTPUT);
-=======
-    pinMode(pes_pin, OUTPUT);
->>>>>>> 72ac51b3b5b9bb5096e63de8368ed6f54b4432c9
 
     // waits after initilization to start running the program
     delay(1000);
@@ -114,24 +110,39 @@ void setup() {
 
 void loop() {
 
-transmit_packet();
+    // Sends a single packet
+    transmit_packet();
 
-//if (xbee_serial.available())
-  //{ // If data comes in from XBee, send it out to serial monitor
-    // Serial.write(Xbee.read());
+    // Reads the input from the xbee
     str = xbee_serial.read();
+
+    // retransmits this string
     Serial.println(str);
+
+    // Conditionals for different activation states
+
+     // r begins the roving process
     if (str == 'r'){
-      digitalWrite(10, HIGH);
-      Serial.println("Relay Activated");
+      // Uncomment these for testing
+      // digitalWrite(motor_pin_one, HIGH);
+      // Serial.println("Relay Activated");
+
+      // switches into rover mode
+      launch_mode = false;
+      rover_mode = true;
+
+      // sends a signal to confirm rover deployment begun
+
+      xbee_serial.println("Deploy Start");
+      
+      // calls the drive rover function
+      drive_rover();
     }
     if (str == 'd'){
-      digitalWrite(10, LOW);
+      digitalWrite(motor_pin_one, LOW);
       Serial.println("Relay Deactivated");
     }
-  //} else {
   delay(300);
-  //}
 }
 
 // Retrieves the sensor data when called
@@ -166,7 +177,9 @@ void get_sensor_data() {
 
 //Transmitts a packet when called
 void transmit_packet() {
+  // get accel values
   accelgyro.getAcceleration(&ax, &ay, &az);
+  
   if (xbee_serial.available()){
     // Acceleration data
     xbee_serial.print("|X: ");
@@ -176,8 +189,10 @@ void transmit_packet() {
     xbee_serial.print("|Z: ");
     xbee_serial.println(az);
 
-    // Transmits the current gps values
-    get_gps_values();
+    if(launch_mode || standby_mode){
+        // Transmits the current gps values
+        get_gps_values();
+    }
   }
     
 }
@@ -185,16 +200,28 @@ void transmit_packet() {
 // Operates the driving of the rover
 void drive_rover() {
 
+    // Calls the deployment function
     deploy_rover();
 
     // turns on the motors by activating the relay
     digitalWrite(motor_pin_one, HIGH);
+    
+    xbee_serial.println("Roving begun !");
 
+    // this will need to be experimentaly dervied
     delay(30000);
 
+    // After the roving turn the motors off by setting the pin low
+    digitalWrite(motor_pin_one, LOW);
 
+    xbee_serial.println("Roving completed!");
+
+    get_sensor_data();
+    delay(100);
     
-    
+    // Deploys the power flower
+    deploy_power_flower();
+    delay(500);
     
   
 }
@@ -202,10 +229,20 @@ void drive_rover() {
 // Deploys the rover from the rocket
 void deploy_rover() {
 
+    xbee_serial.println("Deployment Begun");
+
     digitalWrite(pes_pin, HIGH);
 
+    // These delay values will need to be dervied from testing
+    delay(1000);
+    transmit_packet();
+    delay(1000);
+    transmit_packet();
+    
     // After the deployment has finished deploy the thrid wheel
     deploy_third_wheel();
+
+    xbee_serial.println("Deployment Complete !");
 }
 
 // deploys the power flower after the rover has moved the correct distance
@@ -221,7 +258,8 @@ void deploy_power_flower() {
   
 }
 
-// This needs to be figurd out, The servo Has not been working with the same or similar code to the power flower
+// Third Wheel deployment code
+// I don't know why it works but it does so don't touch it
 void deploy_third_wheel() {
 
     int pos_third = 0;
@@ -230,14 +268,19 @@ void deploy_third_wheel() {
 
     third_wheel.write(90);
   
-    for (pos_third = 0; pos_third <= 30; pos_third += 1) { // goes from 0 degrees to 180 degrees
+    for (pos_third = 0; pos_third <= 30; pos_third += 1) {
       // in steps of 1 degree
       third_wheel.write(pos_third);              // tell servo to go to position in variable 'pos'
       delay(15);                       // waits 15ms for the servo to reach the position
     }
 
+    delay (2000);
+    
   
 }
+
+// The stuff below is a bunch of GPS control functions that i'm not sure how they work
+// I might try to reduce the size of these later if time allows
 
 SIGNAL(TIMER0_COMPA_vect) {
   char c = GPS.read();
