@@ -100,8 +100,12 @@ void setup() {
     // Interrupt goes off every 1 millisecond
     useInterrupt(true);
 
+<<<<<<< HEAD
     // Set Relay pin
     pinMode(10, OUTPUT);
+=======
+    pinMode(pes_pin, OUTPUT);
+>>>>>>> 72ac51b3b5b9bb5096e63de8368ed6f54b4432c9
 
     // waits after initilization to start running the program
     delay(1000);
