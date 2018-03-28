@@ -96,6 +96,8 @@ void setup() {
     // Interrupt goes off every 1 millisecond
     useInterrupt(true);
 
+    pinMode(pes_pin, OUTPUT);
+
     // waits after initilization to start running the program
     delay(1000);
 
