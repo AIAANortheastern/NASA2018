@@ -95,7 +95,7 @@ void setup() {
     power_deploy.attach(power_deploy_pin);
 
     // starts the GPS serial object at the 9600 baud rate
-    GPS.begin(4800);
+    //GPS.begin(4800);
   
     // Set the update rate of the GPS
     GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
