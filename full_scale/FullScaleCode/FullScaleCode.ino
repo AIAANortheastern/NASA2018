@@ -71,7 +71,7 @@ boolean standby_mode = false;
 void setup() {
 
     // start Serial Connection
-    Serial.begin(19200);
+    Serial.begin(4800);
 
     // starts the wire object
     Wire.begin();
@@ -95,7 +95,7 @@ void setup() {
     power_deploy.attach(power_deploy_pin);
 
     // starts the GPS serial object at the 9600 baud rate
-    //GPS.begin(4800);
+    //GPS.begin(9600);
   
     // Set the update rate of the GPS
     GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
@@ -178,11 +178,11 @@ void get_sensor_data() {
 //Transmitts a packet when called
 void transmit_packet() {
   // get accel values
-  accelgyro.getAcceleration(&ax, &ay, &az);
+  //accelgyro.getAcceleration(&ax, &ay, &az);
   
   if (xbee_serial.available()){
     // Acceleration data
-    xbee_serial.print("|X: ");
+    /* xbee_serial.print("|X: ");
     xbee_serial.print(ax);
     xbee_serial.print("|Y: ");
     xbee_serial.print(ay);
@@ -191,11 +191,10 @@ void transmit_packet() {
 
     if(launch_mode || standby_mode){
         // Transmits the current gps values
-        get_gps_values();
+        get_gps_values(); */
     }
   }
     
-}
 
 // Operates the driving of the rover
 void drive_rover() {
@@ -216,7 +215,7 @@ void drive_rover() {
 
     xbee_serial.println("Roving completed!");
 
-    get_sensor_data();
+    //get_sensor_data();
     delay(100);
     
     // Deploys the power flower
