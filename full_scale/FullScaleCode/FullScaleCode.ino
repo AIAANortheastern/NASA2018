@@ -171,18 +171,16 @@ void get_sensor_data() {
         sample_count = 0;
         sum = 0;
     }
-
-    
 }
 
 //Transmitts a packet when called
 void transmit_packet() {
   // get accel values
-  //accelgyro.getAcceleration(&ax, &ay, &az);
+  accelgyro.getAcceleration(&ax, &ay, &az);
   
   if (xbee_serial.available()){
     // Acceleration data
-    /* xbee_serial.print("|X: ");
+    xbee_serial.print("|X: ");
     xbee_serial.print(ax);
     xbee_serial.print("|Y: ");
     xbee_serial.print(ay);
@@ -191,9 +189,10 @@ void transmit_packet() {
 
     if(launch_mode || standby_mode){
         // Transmits the current gps values
-        get_gps_values(); */
+        get_gps_values();
     }
   }
+}
     
 
 // Operates the driving of the rover
